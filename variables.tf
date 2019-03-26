@@ -51,7 +51,7 @@ variable "environment" {
 }
 
 variable "cpu" {
-  default     = "512"
+  default     = "256"
   description = "cpu of worker"
 }
 
