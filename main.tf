@@ -64,7 +64,15 @@ resource "aws_ecs_service" "worker_service" {
 }
 
 module "lambda" {
-  source = "./sqsFargateTrigger"
+  source                  = "./sqsFargateTrigger"
+  namespace               = "${var.namespace}"
+  name                    = "${var.name}"
+  stage                   = "${var.stage}"
+  delimiter               = "${var.delimiter}"
+  attributes              = "${var.attributes}"
+  tags                    = "${var.tags}"
+  trigger_check_frequency = "${var.trigger_check_frequency}"
+  lambda_timeout          = "${var.lambda_timeout}"
 
   trigger_config = [{
     cluster  = "${var.worker_cluster_arn == "" ? aws_ecs_cluster.service_cluster.arn : var.worker_cluster_arn}"

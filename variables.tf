@@ -87,3 +87,13 @@ variable "sqs_queue" {
 variable "region" {
   description = "region"
 }
+
+variable "trigger_check_frequency" {
+  description = "trigger_check_frequency"
+  default     = 10
+}
+
+variable "lambda_timeout" {
+  description = "lambda_timeout"
+  default     = 900
+}
