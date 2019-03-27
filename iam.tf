@@ -11,9 +11,27 @@ data "aws_iam_policy_document" "ecs_assume_role" {
   }
 }
 
-data "aws_iam_policy_document" "read_write_s3_and_logs" {
+data "aws_iam_policy_document" "write_logs" {
   statement {
     sid = "AllowWriteToCloudwatchLogs"
+
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+}
+
+data "aws_iam_policy_document" "read_write_s3_logs" {
+  source_json = "${data.aws_iam_policy_document.write_logs.json}"
+
+  statement {
+    sid = "AllowWriteS3"
 
     effect = "Allow"
 
@@ -93,7 +111,7 @@ data "aws_iam_policy_document" "read_write_s3_and_logs" {
 }
 
 data "aws_iam_policy_document" "allow_sqs" {
-  source_json = "${data.aws_iam_policy_document.read_write_s3_and_logs.json}"
+  source_json = "${data.aws_iam_policy_document.read_write_s3_logs.json}"
 
   statement {
     sid    = "AllowSQS"
