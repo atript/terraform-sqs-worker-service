@@ -28,6 +28,8 @@ data "aws_iam_policy_document" "write_logs" {
 }
 
 data "aws_iam_policy_document" "read_write_s3_logs" {
+  source_json = "${data.aws_iam_policy_document.write_logs.json}"
+
   statement {
     sid = "AllowWriteToCloudwatchLogs"
 
@@ -42,7 +44,7 @@ data "aws_iam_policy_document" "read_write_s3_logs" {
 }
 
 data "aws_iam_policy_document" "allow_sqs" {
-  source_json = "${data.aws_iam_policy_document.write_logs.json}"
+  source_json = "${data.aws_iam_policy_document.read_write_s3_logs.json}"
 
   statement {
     sid    = "AllowSQS"
