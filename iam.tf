@@ -27,6 +27,20 @@ data "aws_iam_policy_document" "write_logs" {
   }
 }
 
+data "aws_iam_policy_document" "read_write_s3_logs" {
+  statement {
+    sid = "AllowWriteToCloudwatchLogs"
+
+    effect = "Allow"
+
+    actions = [
+      "s3:*",
+    ]
+
+    resources = ["arn:aws:s3:*:*:*"]
+  }
+}
+
 data "aws_iam_policy_document" "allow_sqs" {
   source_json = "${data.aws_iam_policy_document.write_logs.json}"
 
@@ -35,11 +49,7 @@ data "aws_iam_policy_document" "allow_sqs" {
     effect = "Allow"
 
     actions = [
-      "sqs:ReceiveMessage",
-      "sqs:SendMessage",
-      "sqs:SendMessageBatch",
-      "sqs:DeleteMessage",
-      "sqs:GetQueueAttributes",
+      "sqs:*",
     ]
 
     resources = ["arn:aws:sqs:*:*:*"]
