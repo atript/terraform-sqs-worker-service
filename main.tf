@@ -14,7 +14,7 @@ module "service_label" {
 }
 
 resource "aws_ecs_cluster" "service_cluster" {
-  count = "${var.worker_cluster_arn == "" ? 1 : 0}"
+  count = "${var.workers_cluster_arn == "" ? 1 : 0}"
   name  = "${local.cluster_name}"
 }
 
@@ -50,7 +50,7 @@ resource "aws_ecs_task_definition" "main" {
 
 resource "aws_ecs_service" "worker_service" {
   name            = "${module.service_label.id}-service"
-  cluster         = "${var.worker_cluster_arn == "" ? aws_ecs_cluster.service_cluster.arn : var.worker_cluster_arn}"
+  cluster         = "${var.workers_cluster_arn == "" ? aws_ecs_cluster.service_cluster.arn : var.workers_cluster_arn}"
   task_definition = "${aws_ecs_task_definition.main.arn}"
   desired_count   = "0"
 
@@ -75,7 +75,7 @@ module "lambda" {
   lambda_timeout          = "${var.lambda_timeout}"
 
   trigger_config = [{
-    cluster  = "${var.worker_cluster_arn == "" ? aws_ecs_cluster.service_cluster.arn : var.worker_cluster_arn}"
+    cluster  = "${var.workers_cluster_arn == "" ? aws_ecs_cluster.service_cluster.arn : var.workers_cluster_arn}"
     service  = "${aws_ecs_service.worker_service.name}"
     QueueUrl = "${var.sqs_queue}"
   }]

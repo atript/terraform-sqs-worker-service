@@ -60,22 +60,12 @@ variable "memory" {
   description = "memory of worker"
 }
 
-variable "cluster_id" {
-  default     = ""
-  description = "cluster id"
-}
-
 variable "worker_log_group" {
   default     = ""
   description = "worker_log_group name"
 }
 
-variable "worker_cluster_id" {
-  default     = ""
-  description = "cluster id"
-}
-
-variable "worker_cluster_arn" {
+variable "workers_cluster_arn" {
   default     = ""
   description = "cluster arn"
 }
