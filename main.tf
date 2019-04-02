@@ -9,9 +9,11 @@ module "service_label" {
 }
 
 module "container_definition" {
-  source          = "git::https://github.com/cloudposse/terraform-aws-ecs-container-definition.git?ref=tags/0.6.0"
-  container_name  = "${module.service_label.id}-container"
-  container_image = "${var.container_image}"
+  source           = "git::https://github.com/cloudposse/terraform-aws-ecs-container-definition.git?ref=tags/0.6.0"
+  container_name   = "${module.service_label.id}-container"
+  container_image  = "${var.container_image}"
+  container_cpu    = "${var.cpu}"
+  container_memory = "${var.memory}"
 
   log_options = {
     awslogs-region        = "${var.region}"
