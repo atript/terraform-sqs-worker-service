@@ -77,8 +77,8 @@ resource "aws_iam_role_policy" "lambda" {
 
 data "archive_file" "sqs_fargate_trigger" {
   type        = "zip"
-  source_file = "${path.module}/index.js"
-  output_path = "${path.module}/sqs_fargate_trigger.zip"
+  source_file = "index.js"
+  output_path = "sqs_fargate_trigger.zip"
 }
 
 resource "aws_lambda_function" "sqs_fargate_trigger" {
