@@ -9,7 +9,7 @@ module "label" {
 }
 
 locals {
-  package_hash = "${base64sha256(file(data.archive_file.sqs_fargate_trigger.source_file))}"
+  package_hash = "${base64sha256(file(data.local_file.sqs_fargate_trigger))}"
 }
 
 data "aws_iam_policy_document" "assume_role" {
