@@ -87,3 +87,14 @@ variable "lambda_timeout" {
   description = "lambda_timeout"
   default     = 900
 }
+
+
+variable "scaling_strategy" {
+  description = "Scaling strategy for lambda trigger"
+  default     = "DEFAULT_STRATEGY"
+}
+
+variable "max_tasks_count" {
+  description = "Max number of tasks for current worker"
+  default     = 1
+}
