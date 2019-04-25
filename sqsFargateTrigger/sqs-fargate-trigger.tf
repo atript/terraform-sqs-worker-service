@@ -75,9 +75,17 @@ resource "aws_iam_role_policy" "lambda" {
   policy = "${element(compact(concat(data.aws_iam_policy_document.lambda.*.json, data.aws_iam_policy_document.lambda_sqs.*.json, data.aws_iam_policy_document.lambda_basic.*.json)), 0)}"
 }
 
+data "local_file" "sqs_fargate_trigger" {
+  filename = "${path.module}/index.js"
+}
+
 data "archive_file" "sqs_fargate_trigger" {
   type        = "zip"
-  source_file = "${path.module}/index.js"
+  # source_file = "${path.module}/index.js"
+  source {
+    content  = "${data.local_file.sqs_fargate_trigger}"
+    filename = "index.js"
+  }
   output_path = "${path.module}/sqs_fargate_trigger.zip"
 }
 
