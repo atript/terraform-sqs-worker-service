@@ -9,7 +9,7 @@ module "label" {
 }
 
 locals {
-  package_hash = "${base64sha256(file(data.local_file.sqs_fargate_trigger))}"
+  package_hash = "${base64sha256(data.local_file.sqs_fargate_trigger.content)}"
 }
 
 data "aws_iam_policy_document" "assume_role" {
@@ -83,7 +83,7 @@ data "archive_file" "sqs_fargate_trigger" {
   type        = "zip"
   # source_file = "${path.module}/index.js"
   source {
-    content  = "${data.local_file.sqs_fargate_trigger}"
+    content  = "${data.local_file.sqs_fargate_trigger.content}"
     filename = "index.js"
   }
   output_path = "${path.module}/sqs_fargate_trigger.zip"
