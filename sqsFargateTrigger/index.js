@@ -131,7 +131,7 @@ async function getCurrentTaskCount(service, cluster) {
   } = await ecs
     .describeServices({
       cluster,
-      service
+      services: [service]
     })
     .promise();
   return { desiredCount, runningCount };
