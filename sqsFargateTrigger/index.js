@@ -29,7 +29,7 @@ function runScalingStrategy(config) {
 }
 
 async function maxReachScalingStrategy(config) {
-  console.log(`maxReachScalingStrategy run`);
+  console.log(`maxReachScalingStrategy run`, config);
   const { service, cluster, QueueUrl, max_tasks_count } = config;
   console.log(`check ${QueueUrl} for messages`);
 
@@ -65,7 +65,7 @@ async function maxReachScalingStrategy(config) {
 }
 
 async function defaultScalingStrategy(config) {
-  console.log(`defaultScalingStrategy run`);
+  console.log(`defaultScalingStrategy run`, config);
   const { service, cluster, QueueUrl } = config;
   console.log(`check ${QueueUrl} for messages`);
 
