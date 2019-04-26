@@ -58,7 +58,7 @@ data "aws_iam_policy_document" "lambda" {
   statement {
     sid       = "AllowFargateUpdates"
     effect    = "Allow"
-    actions   = ["ecs:UpdateService", "ecs:ListTasks"]
+    actions   = ["ecs:UpdateService", "ecs:ListTasks", "ecs:DescribeServices"]
     resources = ["*"]
   }
 }
@@ -80,12 +80,14 @@ data "local_file" "sqs_fargate_trigger" {
 }
 
 data "archive_file" "sqs_fargate_trigger" {
-  type        = "zip"
+  type = "zip"
+
   # source_file = "${path.module}/index.js"
   source {
     content  = "${data.local_file.sqs_fargate_trigger.content}"
     filename = "index.js"
   }
+
   output_path = "${path.module}/sqs_fargate_trigger.zip"
 }
 
