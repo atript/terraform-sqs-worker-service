@@ -11,10 +11,14 @@ module.exports.sqs_trigger = function(event, context) {
     `timeout - ${timeout}\nfrequency - ${frequency}\nCONFIG - ${CONFIG}`
   );
   return new Promise(resolve => {
-    setInterval(
-      () => Promise.all(triggerDefinitions.map(runScalingStrategy)),
-      msFrequency
-    );
+    console.log('Setup inteval', msFrequency);
+    setInterval(() => {
+      const tasks = triggerDefinitions.map(runScalingStrategy);
+      console.log(
+        'Run interval for triggerDefinitions',
+        tasks.length
+      );
+    }, msFrequency);
     setTimeout(resolve, msTimeout - 1000);
   });
 };
