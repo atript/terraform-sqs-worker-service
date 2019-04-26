@@ -98,3 +98,8 @@ variable "max_tasks_count" {
   description = "Max number of tasks for current worker"
   default     = 1
 }
+
+variable "trigger_schedule" {
+  description = "Schedule for scaling lambda invokations"
+  default     = "rate(15 minutes)"
+}
