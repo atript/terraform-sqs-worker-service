@@ -10,16 +10,16 @@ module.exports.sqs_trigger = function(event, context) {
   console.log(
     `timeout - ${timeout}\nfrequency - ${frequency}\nCONFIG - ${CONFIG}`
   );
+  console.log('Setup inteval', msFrequency);
+  const intervalId = setInterval(() => {
+    const tasks = triggerDefinitions.map(runScalingStrategy);
+    console.log('Run interval for triggerDefinitions', tasks.length);
+  }, msFrequency);
   return new Promise(resolve => {
-    console.log('Setup inteval', msFrequency);
-    setInterval(() => {
-      const tasks = triggerDefinitions.map(runScalingStrategy);
-      console.log(
-        'Run interval for triggerDefinitions',
-        tasks.length
-      );
-    }, msFrequency);
-    setTimeout(resolve, msTimeout - 1000);
+    setTimeout(() => {
+      clearInterval(intervalId);
+      resolve();
+    }, msTimeout - 1000);
   });
 };
 
