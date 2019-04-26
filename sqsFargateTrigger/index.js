@@ -32,6 +32,7 @@ async function maxReachScalingStrategy(config) {
   console.log(`maxReachScalingStrategy run`, config);
   const { service, cluster, QueueUrl, max_tasks_count } = config;
   console.log(`check ${QueueUrl} for messages`);
+  const maxTasksCount = parseInt(max_tasks_count, 10);
 
   const { runningCount, desiredCount } = await getCurrentTaskCount(
     service,
@@ -55,7 +56,7 @@ async function maxReachScalingStrategy(config) {
 
   console.log(`${numberOfMessages} found`);
 
-  if (ApproximateNumberOfMessages > 0 && desiredCount < max_tasks_count) {
+  if (ApproximateNumberOfMessages > 0 && desiredCount < maxTasksCount) {
     return setDesiredCount(service, cluster, desiredCount + 1);
   }
 
