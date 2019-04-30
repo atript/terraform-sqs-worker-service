@@ -75,26 +75,30 @@ resource "aws_iam_role_policy" "lambda" {
   policy = "${element(compact(concat(data.aws_iam_policy_document.lambda.*.json, data.aws_iam_policy_document.lambda_sqs.*.json, data.aws_iam_policy_document.lambda_basic.*.json)), 0)}"
 }
 
-data "local_file" "sqs_fargate_trigger" {
+data "local_file" "source_code" {
   filename = "${path.module}/index.js"
 }
 
-data "archive_file" "sqs_fargate_trigger" {
-  type = "zip"
-
-  # source_file = "${path.module}/index.js"
-  source {
-    content  = "${data.local_file.sqs_fargate_trigger.content}"
-    filename = "index.js"
-  }
-
-  output_path = "${path.module}/sqs_fargate_trigger.zip"
+locals {
+  source_code_hash = "${base64sha256(data.local_file.source_code.content)}"
 }
 
+resource "null_resource" "source_code" {
+  triggers {
+    source_code_hash = "${local.source_code_hash}"
+  }
+}
+
+data "archive_file" "sqs_fargate_trigger" {
+  type        = "zip"
+  source_file = "${data.local_file.filename}"
+  output_path = "${path.module}/.build/${data.local_file.filename}.zip"
+  depends_on  = ["null_resource.source_code"]
+}
 resource "aws_lambda_function" "sqs_fargate_trigger" {
   filename         = "${data.archive_file.sqs_fargate_trigger.output_path}"
   function_name    = "${module.label.id}-sqs-fargate-trigger"
-  source_code_hash = "${local.package_hash}"
+  source_code_hash = "${data.archive_file.sqs_fargate_trigger.output_base64sha256}"
   role             = "${aws_iam_role.lambda.arn}"
   handler          = "index.sqs_trigger"
   runtime          = "${var.runtime}"
