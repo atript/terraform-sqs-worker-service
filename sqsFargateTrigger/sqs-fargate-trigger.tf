@@ -91,8 +91,8 @@ resource "null_resource" "source_code" {
 
 data "archive_file" "sqs_fargate_trigger" {
   type        = "zip"
-  source_file = "${data.local_file.filename}"
-  output_path = "${path.module}/.build/${data.local_file.filename}.zip"
+  source_file = "${data.local_file.source_code.filename}"
+  output_path = "${path.module}/.build/sqs_fargate_trigger.zip"
   depends_on  = ["null_resource.source_code"]
 }
 resource "aws_lambda_function" "sqs_fargate_trigger" {
