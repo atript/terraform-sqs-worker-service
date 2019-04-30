@@ -6,6 +6,7 @@ const triggerDefinitions = JSON.parse(CONFIG);
 const msTimeout = timeout * 1000;
 const msFrequency = frequency * 1000;
 
+//index
 module.exports.sqs_trigger = function(event, context) {
   console.log(
     `timeout - ${timeout}\nfrequency - ${frequency}\nCONFIG - ${CONFIG}`
