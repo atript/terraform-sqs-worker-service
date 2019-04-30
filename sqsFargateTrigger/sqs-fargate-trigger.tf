@@ -8,9 +8,9 @@ module "label" {
   tags       = "${var.tags}"
 }
 
-locals {
-  package_hash = "${base64sha256(data.local_file.sqs_fargate_trigger.content)}"
-}
+# locals {
+#   package_hash = "${base64sha256(data.local_file.sqs_fargate_trigger.content)}"
+# }
 
 data "aws_iam_policy_document" "assume_role" {
   statement {
