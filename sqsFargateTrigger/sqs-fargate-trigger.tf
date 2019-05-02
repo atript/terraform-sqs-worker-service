@@ -8,10 +8,6 @@ module "label" {
   tags       = "${var.tags}"
 }
 
-locals {
-  package_hash = "${base64sha256(file(data.archive_file.sqs_fargate_trigger.source_file))}"
-}
-
 data "aws_iam_policy_document" "assume_role" {
   statement {
     effect = "Allow"
@@ -58,7 +54,7 @@ data "aws_iam_policy_document" "lambda" {
   statement {
     sid       = "AllowFargateUpdates"
     effect    = "Allow"
-    actions   = ["ecs:UpdateService", "ecs:ListTasks"]
+    actions   = ["ecs:UpdateService", "ecs:ListTasks", "ecs:DescribeServices"]
     resources = ["*"]
   }
 }
@@ -75,16 +71,30 @@ resource "aws_iam_role_policy" "lambda" {
   policy = "${element(compact(concat(data.aws_iam_policy_document.lambda.*.json, data.aws_iam_policy_document.lambda_sqs.*.json, data.aws_iam_policy_document.lambda_basic.*.json)), 0)}"
 }
 
-data "archive_file" "sqs_fargate_trigger" {
-  type        = "zip"
-  source_file = "${path.module}/index.js"
-  output_path = "${path.module}/sqs_fargate_trigger.zip"
+data "local_file" "source_code" {
+  filename = "${path.module}/index.js"
 }
 
+locals {
+  source_code_hash = "${base64sha256(data.local_file.source_code.content)}"
+}
+
+resource "null_resource" "source_code" {
+  triggers {
+    source_code_hash = "${local.source_code_hash}"
+  }
+}
+
+data "archive_file" "sqs_fargate_trigger" {
+  type        = "zip"
+  source_file = "${data.local_file.source_code.filename}"
+  output_path = "${path.module}/.build/sqs_fargate_trigger.zip"
+  depends_on  = ["null_resource.source_code"]
+}
 resource "aws_lambda_function" "sqs_fargate_trigger" {
   filename         = "${data.archive_file.sqs_fargate_trigger.output_path}"
   function_name    = "${module.label.id}-sqs-fargate-trigger"
-  source_code_hash = "${local.package_hash}"
+  source_code_hash = "${data.archive_file.sqs_fargate_trigger.output_base64sha256}"
   role             = "${aws_iam_role.lambda.arn}"
   handler          = "index.sqs_trigger"
   runtime          = "${var.runtime}"

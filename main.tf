@@ -60,10 +60,12 @@ module "lambda" {
   tags                    = "${var.tags}"
   trigger_check_frequency = "${var.trigger_check_frequency}"
   lambda_timeout          = "${var.lambda_timeout}"
-
+  schedule                = "${var.trigger_schedule}"
   trigger_config = [{
     cluster  = "${var.workers_cluster_arn}"
     service  = "${aws_ecs_service.worker_service.name}"
-    QueueUrl = "${var.sqs_queue}"
+    QueueUrl = "${var.sqs_queue}",
+    scaling_strategy = "${var.scaling_strategy}",
+    max_tasks_count = "${var.max_tasks_count}"
   }]
 }
